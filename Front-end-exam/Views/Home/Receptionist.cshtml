@@ -1,0 +1,122 @@
+@model Front_end_exam.Models.ReceptionistDashboardViewModel
+@{
+    ViewData["Title"] = "Receptionist";
+}
+
+<section class="admin-heading">
+    <span class="section-chip">Queue Desk</span>
+    <h3>Receptionist Dashboard</h3>
+    <p class="muted-text">@Model.UserName handling queue for @Model.ClinicName</p>
+</section>
+
+@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+{
+    <div class="card-panel green lighten-5 green-text text-darken-3 status-banner">@Model.StatusMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="card-panel red lighten-5 red-text text-darken-3 status-banner">@Model.ErrorMessage</div>
+} 
+
+<section class="admin-grid receptionist-grid">
+    <article class="table-card">
+        <div class="queue-toolbar">
+            <div>
+                <h5>Daily Queue</h5>
+                <p class="muted-text">Select a date to load queue entries for the receptionist desk.</p>
+            </div>
+            <form asp-action="Receptionist" method="get" class="queue-date-form">
+                <div class="input-field date-field">
+                    <input type="date" id="date" name="date" value="@Model.SelectedDate" />
+                </div>
+                <button type="submit" class="btn waves-effect waves-light amber darken-2">Load</button>
+            </form>
+        </div>
+
+        <table class="highlight responsive-table">
+            <thead>
+                <tr>
+                    <th>Token</th>
+                    <th>Patient</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Entries.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" class="empty-state-cell">No queue entries found for this date.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var entry in Model.Entries)
+                    {
+                        <tr>
+                            <td>#@entry.TokenNumber</td>
+                            <td>@entry.Appointment.Patient.Name</td>
+                            <td>@(string.IsNullOrWhiteSpace(entry.Appointment.Patient.Phone) ? "-" : entry.Appointment.Patient.Phone)</td>
+                            <td><span class="status-pill role-pill">@entry.Status.Replace("_", " ")</span></td>
+                            <td>
+                                <div class="queue-action-group">
+                                    @if (entry.Status == "waiting")
+                                    {
+                                        <form asp-action="UpdateQueueStatus" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="QueueId" value="@entry.Id" />
+                                            <input type="hidden" name="Status" value="in-progress" />
+                                            <input type="hidden" name="Date" value="@Model.SelectedDate" />
+                                            <button type="submit" class="btn-small waves-effect waves-light">In Progress</button>
+                                        </form>
+                                        <form asp-action="UpdateQueueStatus" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="QueueId" value="@entry.Id" />
+                                            <input type="hidden" name="Status" value="skipped" />
+                                            <input type="hidden" name="Date" value="@Model.SelectedDate" />
+                                            <button type="submit" class="btn-small red lighten-1 waves-effect waves-light">Skip</button>
+                                        </form>
+                                    }
+                                    else if (entry.Status == "in_progress")
+                                    {
+                                        <form asp-action="UpdateQueueStatus" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="QueueId" value="@entry.Id" />
+                                            <input type="hidden" name="Status" value="done" />
+                                            <input type="hidden" name="Date" value="@Model.SelectedDate" />
+                                            <button type="submit" class="btn-small green waves-effect waves-light">Done</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="muted-text">No action</span>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </article>
+
+    <aside class="quick-actions">
+        <article class="admin-card">
+            <h5>Queue Summary</h5>
+            <p class="muted-text">Selected date: @Model.SelectedDate</p>
+            <p class="muted-text">Total entries: @Model.Entries.Count</p>
+            <form asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-flat logout-btn">Logout</button>
+            </form>
+        </article>
+        <article class="admin-card">
+            <h5>Status Flow</h5>
+            <p class="muted-text">waiting -> in-progress</p>
+            <p class="muted-text">waiting -> skipped</p>
+            <p class="muted-text">in-progress -> done</p>
+        </article>
+    </aside>
+</section>

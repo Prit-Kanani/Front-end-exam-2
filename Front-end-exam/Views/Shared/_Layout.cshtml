@@ -1,0 +1,71 @@
+@using Microsoft.AspNetCore.Http
+@{
+    var token = Context.Session.GetString(SessionKeys.AuthToken);
+    var role = Context.Session.GetString(SessionKeys.UserRole);
+    var userName = Context.Session.GetString(SessionKeys.UserName);
+    var isLoggedIn = !string.IsNullOrWhiteSpace(token);
+    var isAdmin = string.Equals(role, "admin", StringComparison.OrdinalIgnoreCase);
+    var isReceptionist = string.Equals(role, "receptionist", StringComparison.OrdinalIgnoreCase);
+    var isPatient = string.Equals(role, "patient", StringComparison.OrdinalIgnoreCase);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Clinic CMS</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Front_end_exam.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="app-header z-depth-0">
+        <nav class="white z-depth-0">
+            <div class="nav-wrapper app-shell">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="brand-logo app-brand">Clinic CMS</a>
+                <ul class="right hide-on-med-and-down">
+                    @if (!isLoggedIn)
+                    {
+                        <li><a asp-area="" asp-controller="Home" asp-action="Login" class="grey-text text-darken-2">Login</a></li>
+                    }
+                    @if (isAdmin)
+                    {
+                        <li><a asp-area="" asp-controller="Home" asp-action="Admin" class="grey-text text-darken-2">Admin</a></li>
+                    }
+                    @if (isReceptionist)
+                    {
+                        <li><a asp-area="" asp-controller="Home" asp-action="Receptionist" class="grey-text text-darken-2">Receptionist</a></li>
+                    }
+                    @if (isPatient)
+                    {
+                        <li><a asp-area="" asp-controller="Home" asp-action="Patient" class="grey-text text-darken-2">Patient</a></li>
+                    }
+                    @if (isLoggedIn)
+                    {
+                        <li class="nav-user grey-text text-darken-1">@userName</li>
+                        <li>
+                            <form asp-controller="Home" asp-action="Logout" method="post" class="nav-logout-form">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn-flat nav-logout-btn">Logout</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="app-shell">
+        @RenderBody()
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

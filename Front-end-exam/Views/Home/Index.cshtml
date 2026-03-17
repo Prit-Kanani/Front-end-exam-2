@@ -1,0 +1,61 @@
+@model Front_end_exam.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    var authError = TempData["AuthError"] as string;
+}
+
+<section class="login-page">
+    <div class="row login-wrap">
+        <div class="col s12 l6">
+            <div class="login-copy">
+                <span class="section-chip">Clinic CMS</span>
+                <h1>Sign in to Clinic Queue Management</h1>
+                <p class="login-subtitle">Use your admin account to access clinic details and manage users.</p>
+                <div class="credential-box">
+                    <div><span>Demo email</span><strong>23010101126@darshan.ac.in</strong></div>
+                    <div><span>Demo password</span><strong>password123</strong></div>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 l5 offset-l1">
+            <div class="card login-card">
+                <div class="card-content">
+                    <span class="card-title">Login</span>
+                    @if (!string.IsNullOrWhiteSpace(authError) || !string.IsNullOrWhiteSpace(Model.ErrorMessage))
+                    {
+                        <div class="card-panel red lighten-5 red-text text-darken-3 auth-alert">
+                            @(Model.ErrorMessage ?? authError)
+                        </div>
+                    }
+                    <form asp-controller="Home" asp-action="Login" method="post" novalidate>
+                        @* @Html.AntiForgeryToken() *@
+                        <div asp-validation-summary="ModelOnly" class="field-validation validation-summary"></div>
+                        <div class="input-field">
+                            <input asp-for="Email" type="email" autocomplete="username" placeholder="Enter your email" />
+                            <label asp-for="Email"></label>
+                            <span asp-validation-for="Email" class="field-validation"></span>
+                        </div>
+                        <div class="input-field">
+                            <input asp-for="Password" type="password" autocomplete="current-password" placeholder="Enter your password" />
+                            <label asp-for="Password"></label>
+                            <span asp-validation-for="Password" class="field-validation"></span>
+                        </div>
+                        <div class="login-actions">
+                            <label class="remember-option">
+                                <input type="checkbox" checked="checked" disabled="disabled" />
+                                <span>Keep session active on this browser</span>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn-large waves-effect waves-light amber darken-2 full-width">
+                            Sign In
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

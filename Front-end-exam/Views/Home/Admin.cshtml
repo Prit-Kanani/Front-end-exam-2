@@ -1,0 +1,113 @@
+@model Front_end_exam.Models.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<section class="admin-heading">
+    <span class="section-chip">Step 2</span>
+    <h3>Admin Dashboard</h3>
+    <p class="muted-text">@Model.UserName managing @Model.ClinicName</p>
+</section>
+
+@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+{
+    <div class="card-panel green lighten-5 green-text text-darken-3 status-banner">@Model.StatusMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="card-panel red lighten-5 red-text text-darken-3 status-banner">@Model.ErrorMessage</div>
+}
+
+<section class="metric-row">
+    <article class="metric-card">   
+        <span>Total Users</span>
+        <strong>@Model.Clinic.UserCount</strong>
+    </article>
+    <article class="metric-card">
+        <span>Appointments</span>
+        <strong>@Model.Clinic.AppointmentCount</strong>
+    </article>
+    <article class="metric-card">
+        <span>Queue Entries</span>
+        <strong>@Model.Clinic.QueueCount</strong>
+    </article>
+</section>
+
+<section class="admin-grid">
+    <article class="table-card">
+        <div class="admin-heading">
+            <h5>Clinic Users</h5>
+        </div>
+        <table class="highlight responsive-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td>@user.Name</td>
+                        <td><span class="status-pill role-pill">@user.Role</span></td>
+                        <td>@user.Email</td>
+                        <td>@(string.IsNullOrWhiteSpace(user.Phone) ? "-" : user.Phone)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </article>
+
+    <aside class="quick-actions">
+        <article class="admin-card">
+            <h5>Clinic Info</h5>
+            <p class="muted-text">Clinic Name: @Model.ClinicName</p>
+            <p class="muted-text">Clinic Code: @Model.ClinicCode</p>
+            <form asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-flat logout-btn">Logout</button>
+            </form>
+        </article>
+        <article class="admin-card">
+            <h5>Create User</h5>
+            <form asp-action="CreateUser" method="post">
+                @Html.AntiForgeryToken()
+                <div class="input-field">
+                    <input asp-for="NewUser.Name" />
+                    <label class="active" asp-for="NewUser.Name"></label>
+                    <span asp-validation-for="NewUser.Name" class="field-validation"></span>
+                </div>
+                <div class="input-field">
+                    <input asp-for="NewUser.Email" />
+                    <label class="active" asp-for="NewUser.Email"></label>
+                    <span asp-validation-for="NewUser.Email" class="field-validation"></span>
+                </div>
+                <div class="input-field">
+                    <input asp-for="NewUser.Password" type="password" />
+                    <label class="active" asp-for="NewUser.Password"></label>
+                    <span asp-validation-for="NewUser.Password" class="field-validation"></span>
+                </div>
+                <div class="input-field">
+                    <input asp-for="NewUser.Phone" />
+                    <label class="active" asp-for="NewUser.Phone"></label>
+                </div>
+                <div class="input-field">
+                    <select asp-for="NewUser.Role">
+                        <option value="receptionist">Receptionist</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="patient">Patient</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn waves-effect waves-light amber darken-2 full-width">Create User</button>
+            </form>
+        </article>
+    </aside>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

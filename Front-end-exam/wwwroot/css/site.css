@@ -1,0 +1,299 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: #1f2933;
+  background: linear-gradient(180deg, #f6f7fb 0%, #eef2f6 100%);
+  font-family: "Inter", sans-serif;
+}
+
+main {
+  padding: 32px 0 48px;
+}
+
+.app-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.app-header nav {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.app-brand {
+  position: static;
+  transform: none;
+  color: #263238 !important;
+  font-weight: 700;
+}
+
+.nav-user {
+  padding: 0 14px;
+}
+
+.nav-logout-form {
+  margin: 0;
+}
+
+.nav-logout-btn {
+  color: #263238;
+}
+
+.login-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+}
+
+.login-wrap {
+  width: 100%;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.section-chip {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fff3cd;
+  color: #8a5a00;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.login-copy h1 {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1.05;
+  margin: 0 0 18px;
+}
+
+.login-copy p,
+.login-subtitle {
+  color: #52606d;
+  max-width: 540px;
+}
+
+.credential-box,
+.simple-panel {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+.credential-box {
+  margin-top: 24px;
+}
+
+.credential-box div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.credential-box div:last-child {
+  border-bottom: 0;
+}
+
+.credential-box span,
+.helper-note,
+.muted-text {
+  color: #6b7280;
+}
+
+.auth-alert,
+.status-banner {
+  border-radius: 18px;
+}
+
+.validation-summary {
+  margin-bottom: 12px;
+}
+
+.login-card {
+  border-radius: 28px;
+  margin: 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+.admin-card,
+.metric-card,
+.table-card {
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+.admin-card,
+.table-card {
+  padding: 24px;
+}
+
+.admin-heading {
+  margin-bottom: 24px;
+}
+
+.admin-heading h3 {
+  margin: 10px 0 8px;
+}
+
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  padding: 18px;
+}
+
+.metric-card span {
+  display: block;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.metric-card strong {
+  font-size: 2rem;
+}
+
+.table-card table {
+  margin-bottom: 0;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.role-pill {
+  text-transform: capitalize;
+}
+
+.logout-btn {
+  padding-left: 0;
+}
+
+.quick-actions {
+  display: grid;
+  gap: 16px;
+}
+
+.receptionist-grid {
+  grid-template-columns: 1.4fr 0.8fr;
+}
+
+.patient-grid {
+  grid-template-columns: 1.2fr 0.8fr;
+}
+
+.queue-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.queue-date-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.date-field {
+  min-width: 180px;
+  margin: 0;
+}
+
+.queue-action-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.empty-state-cell {
+  padding: 28px 16px;
+  color: #6b7280;
+}
+
+.patient-form {
+  display: grid;
+  gap: 10px;
+}
+
+.patient-detail-block {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #eef2f6;
+}
+
+.patient-record {
+  padding: 14px 0;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.patient-record:last-child {
+  border-bottom: 0;
+}
+
+.muted-inline {
+  display: inline-block;
+  margin-left: 8px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.field-validation {
+  color: #c62828;
+  font-size: 0.8rem;
+}
+
+.login-actions {
+  margin: 8px 0 20px;
+}
+
+.remember-option span {
+  color: #52606d;
+  font-size: 0.95rem;
+}
+
+.input-field select {
+  display: block;
+}
+
+@media (max-width: 992px) {
+  .login-page {
+    min-height: auto;
+    padding-top: 24px;
+  }
+
+  .admin-grid,
+  .metric-row {
+    grid-template-columns: 1fr;
+  }
+
+  .queue-toolbar,
+  .queue-date-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

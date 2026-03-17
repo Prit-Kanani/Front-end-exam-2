@@ -1,0 +1,207 @@
+@model Front_end_exam.Models.PatientDashboardViewModel
+@{
+    ViewData["Title"] = "Patient";
+    var minimumDate = DateTime.Today.AddDays(0).ToString("yyyy-MM-dd");
+}
+
+<section class="admin-heading">
+    <span class="section-chip">Patient Portal</span>
+    <h3>My Care Dashboard</h3>
+    <p class="muted-text">@Model.UserName viewing records for @Model.ClinicName</p>
+</section>
+
+@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+{
+    <div class="card-panel green lighten-5 green-text text-darken-3 status-banner">@Model.StatusMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="card-panel red lighten-5 red-text text-darken-3 status-banner">@Model.ErrorMessage</div>
+}
+
+<section class="admin-grid patient-grid">
+    <article class="table-card">
+        <div class="admin-heading">
+            <h5>Book Appointment</h5>
+            <p class="muted-text">Choose a date and a time slot to book your next visit.</p>
+        </div>
+        <form asp-action="BookAppointment" method="post" class="patient-form">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="field-validation validation-summary"></div>
+            <div class="input-field">
+                <input asp-for="Booking.AppointmentDate" type="date" min="@minimumDate" />
+                <span asp-validation-for="Booking.AppointmentDate" class="field-validation"></span>
+            </div>
+            <div class="input-field">
+                <select asp-for="Booking.TimeSlot">
+                    <option value="10:00-10:15">10:00-10:15</option>
+                    <option value="10:15-10:30">10:15-10:30</option>
+                    <option value="10:30-10:45">10:30-10:45</option>
+                    <option value="10:45-11:00">10:45-11:00</option>
+                    <option value="11:00-11:15">11:00-11:15</option>
+                </select>
+            </div>
+            <button type="submit" class="btn waves-effect waves-light amber darken-2">Book Appointment</button>
+        </form>
+    </article>
+
+    <aside class="quick-actions">
+        <article class="admin-card">
+            <h5>My Summary</h5>
+            <p class="muted-text">Appointments: @Model.Appointments.Count</p>
+            <p class="muted-text">Prescriptions: @Model.Prescriptions.Count</p>
+            <p class="muted-text">Reports: @Model.Reports.Count</p>
+        </article>
+        <article class="admin-card">
+            <h5>Patient Flow</h5>
+            <p class="muted-text">Book appointment</p>
+            <p class="muted-text">Check queue token</p>
+            <p class="muted-text">View prescription and report</p>
+        </article>
+    </aside>
+</section>
+
+<section class="admin-grid patient-grid">
+    <article class="table-card">
+        <div class="admin-heading">
+            <h5>My Appointments</h5>
+        </div>
+        <table class="highlight responsive-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Queue</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Appointments.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" class="empty-state-cell">No appointments booked yet.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var appointment in Model.Appointments)
+                    {
+                        <tr>
+                            <td>@DateTime.Parse(appointment.AppointmentDate).ToString("d")</td>
+                            <td>@appointment.TimeSlot</td>
+                            <td><span class="status-pill role-pill">@appointment.Status.Replace("_", " ")</span></td>
+                            <td>
+                                @if (appointment.QueueEntry is null)
+                                {
+                                    <span>-</span>
+                                }
+                                else
+                                {
+                                    <span>Token @appointment.QueueEntry.TokenNumber</span>
+                                    <span class="muted-inline">@appointment.QueueEntry.Status.Replace("_", " ")</span>
+                                }
+                            </td>
+                            <td><a asp-action="Patient" asp-route-appointmentId="@appointment.Id" class="btn-small waves-effect waves-light">Details</a></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </article>
+
+    <article class="admin-card">
+        <h5>Appointment Details</h5>
+        @if (Model.SelectedAppointment is null)
+        {
+            <p class="muted-text">Select an appointment to see treatment details.</p>
+        }
+        else
+        {
+            <p class="muted-text">Date: @DateTime.Parse(@Model.SelectedAppointment.AppointmentDate).ToString("d")</p>
+            <p class="muted-text">Time: @Model.SelectedAppointment.TimeSlot</p>
+            <p class="muted-text">Status: @Model.SelectedAppointment.Status</p>
+            <div class="patient-detail-block">
+                <h6>Prescription</h6>
+                @if (Model.SelectedAppointment.Prescription is null || Model.SelectedAppointment.Prescription.Medicines.Count == 0)
+                {
+                    <p class="muted-text">No prescription added yet.</p>
+                }
+                else
+                {
+                    @foreach (var medicine in Model.SelectedAppointment.Prescription.Medicines)
+                    {
+                        <p class="muted-text">@medicine.Name - @medicine.Dosage - @medicine.Duration</p>
+                    }
+                    <p class="muted-text">Notes: @(string.IsNullOrWhiteSpace(Model.SelectedAppointment.Prescription.Notes) ? "-" : Model.SelectedAppointment.Prescription.Notes)</p>
+                }
+            </div>
+            <div class="patient-detail-block">
+                <h6>Report</h6>
+                @if (Model.SelectedAppointment.Report is null)
+                {
+                    <p class="muted-text">No report added yet.</p>
+                }
+                else
+                {
+                    <p class="muted-text">Diagnosis: @Model.SelectedAppointment.Report.Diagnosis</p>
+                    <p class="muted-text">Test: @(string.IsNullOrWhiteSpace(Model.SelectedAppointment.Report.TestRecommended) ? "-" : Model.SelectedAppointment.Report.TestRecommended)</p>
+                    <p class="muted-text">Remarks: @(string.IsNullOrWhiteSpace(Model.SelectedAppointment.Report.Remarks) ? "-" : Model.SelectedAppointment.Report.Remarks)</p>
+                }
+            </div>
+        }
+    </article>
+</section>
+
+<section class="admin-grid patient-grid">
+    <article class="table-card">
+        <div class="admin-heading">
+            <h5>My Prescriptions</h5>
+        </div>
+        @if (Model.Prescriptions.Count == 0)
+        {
+            <p class="muted-text">No prescriptions available.</p>
+        }
+        else
+        {
+            @foreach (var prescription in Model.Prescriptions)
+            {
+                <div class="patient-record">
+                    <strong>@(prescription.Doctor?.Name ?? "Doctor")</strong>
+                    <p class="muted-text">@prescription.Appointment?.AppointmentDate @prescription.Appointment?.TimeSlot</p>
+                    @foreach (var medicine in prescription.Medicines)
+                    {
+                        <p class="muted-text">@medicine.Name - @medicine.Dosage - @medicine.Duration</p>
+                    }
+                </div>
+            }
+        }
+    </article>
+
+    <article class="table-card">
+        <div class="admin-heading">
+            <h5>My Reports</h5>
+        </div>
+        @if (Model.Reports.Count == 0)
+        {
+            <p class="muted-text">No reports available.</p>
+        }
+        else
+        {
+            @foreach (var report in Model.Reports)
+            {
+                <div class="patient-record">
+                    <strong>@report.Diagnosis</strong>
+                    <p class="muted-text">Doctor: @(report.Doctor?.Name ?? "-")</p>
+                    <p class="muted-text">Test: @(string.IsNullOrWhiteSpace(report.TestRecommended) ? "-" : report.TestRecommended)</p>
+                    <p class="muted-text">Remarks: @(string.IsNullOrWhiteSpace(report.Remarks) ? "-" : report.Remarks)</p>
+                </div>
+            }
+        }
+    </article>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
