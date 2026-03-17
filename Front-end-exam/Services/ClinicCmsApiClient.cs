@@ -33,7 +33,6 @@ public interface IClinicCmsApiClient
 #region API Client Implementation
 public sealed class ClinicCmsApiClient : IClinicCmsApiClient
 {
-    private const string BaseUrl = "https://cmsback.sampaarsh.cloud/";
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -41,10 +40,10 @@ public sealed class ClinicCmsApiClient : IClinicCmsApiClient
     };
     private readonly HttpClient _httpClient;
 
-    public ClinicCmsApiClient(HttpClient httpClient)
+    public ClinicCmsApiClient(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = new Uri(BaseUrl);
+        _httpClient.BaseAddress = new Uri(configuration.GetConnectionString("BackendLink") ?? "https://cmsback.sampaarsh.cloud/");
         _httpClient.Timeout = TimeSpan.FromSeconds(20);
     }
 
